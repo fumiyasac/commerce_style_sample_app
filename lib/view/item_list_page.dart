@@ -5,6 +5,13 @@ class ItemListPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Example Commerce Item List'),
+      ),
+      body: Center(
+        child: Text("Commerce Item List is WIP."),
+      ),
+    );
   }
 }
