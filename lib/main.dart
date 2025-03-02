@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:commerce_style_sample_app/view/item_list_page.dart';
 
 void main() {
   runApp(
@@ -21,7 +20,9 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepOrangeAccent),
         useMaterial3: false,
       ),
-      home: const ItemListPage(),
+      home: const Center(
+        child: Text("Example"),
+      ),
     );
   }
 }
