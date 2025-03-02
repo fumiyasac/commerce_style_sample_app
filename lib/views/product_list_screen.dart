@@ -11,31 +11,39 @@ class ProductListScreen extends ConsumerStatefulWidget {
 }
 
 class _ProductListScreenState extends ConsumerState<ProductListScreen> {
+
+  // ScrollControllerを利用する
+  // 👉 Scroll位置情報を元に次ページのデータ読み込み処理を実行するために必要
   final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
-    // 初回データ取得
+
+    // 初回表示時のデータ取得処理
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.read(productViewModelProvider.notifier).fetchProducts();
     });
 
-    // スクロールリスナーの設定
+    // Scroll処理のListener追加
     _scrollController.addListener(_onScroll);
   }
 
   @override
   void dispose() {
+    // Scroll処理のListener解除
     _scrollController.removeListener(_onScroll);
     _scrollController.dispose();
     super.dispose();
   }
 
+  // Scroll処理のListener処理で無限スクロールを実行するための処理
+  // 👉 Scroll最下部に到達したら、プロダクト情報のfetch処理を試みる
   void _onScroll() {
-    if (_scrollController.position.pixels >=
-        _scrollController.position.maxScrollExtent - 200) {
+    if (_scrollController.position.pixels >= _scrollController.position.maxScrollExtent) {
+      // ViewModelProviderを利用する（ConsumerStatefulWidgetなのでそのまま利用可能）
       final state = ref.read(productViewModelProvider);
+      // 読み込み中でない時、かつ、次のデータが存在する時にプロダクト情報のfetch処理を実行する
       if (!state.isLoading && state.hasMoreData) {
         ref.read(productViewModelProvider.notifier).fetchProducts();
       }
@@ -109,7 +117,7 @@ class _ProductListScreenState extends ConsumerState<ProductListScreen> {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    "No.${product.id} / Stock: ${product.stock}",
+                    "No.${product.id} / Stock: ${product.stock} / Discount: ${product.discountPercentage}",
                     style: const TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 11,
