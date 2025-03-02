@@ -18,6 +18,7 @@ class ProductController extends _$ProductController {
       return;
     }
     state = state.copyWith(loading: true);
+    // Repositoryの処理を呼び出して利用する
     final repository = ref.read(productRepositoryProvider);
     final productList = await repository.getProducts(offset: state.productList.length);
     if (productList.isEmpty) {
