@@ -37,7 +37,6 @@ class ProductViewModel extends StateNotifier<ProductState> {
       } else {
         // 既存のリストに追加
         final updatedProducts = [...state.products, ...result.products];
-
         state = state.copyWith(
           products: updatedProducts,
           isLoading: false,
@@ -52,10 +51,6 @@ class ProductViewModel extends StateNotifier<ProductState> {
         hasError: true,
         errorMessage: e.toString(),
       );
-      print("===== #Debug Start =====");
-      print("エラー状態に更新");
-      print(e.toString());
-      print("===== #Debug End =====");
     }
   }
 }

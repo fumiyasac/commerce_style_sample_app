@@ -2,22 +2,22 @@ import 'package:dio/dio.dart';
 import 'package:commerce_style_sample_app/models/product_response.dart';
 
 class ProductService {
-  final Dio _dio;
-  final String baseUrl = 'https://dummyjson.com/products';
 
-  ProductService() : _dio = Dio(BaseOptions(
-    connectTimeout: const Duration(seconds: 5),
-    receiveTimeout: const Duration(seconds: 3),
-    contentType: 'application/json',
-  ));
+  final Dio _dio;
+  final String _baseUrl = 'https://dummyjson.com/products';
+
+  ProductService() : _dio = Dio(
+    BaseOptions(
+      connectTimeout: const Duration(seconds: 5),
+      receiveTimeout: const Duration(seconds: 3),
+      contentType: 'application/json',
+    )
+  );
 
   Future<ProductResponse> getProducts({int limit = 10, int skip = 0}) async {
-    print("===== #Debug Start =====");
-    print("int limit = $limit, int skip = $skip");
-    print("===== #Debug End =====");
     try {
       final response = await _dio.get(
-        baseUrl,
+        _baseUrl,
         queryParameters: {
           'limit': limit,
           'skip': skip,

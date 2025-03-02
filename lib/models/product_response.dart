@@ -16,8 +16,8 @@ class ProductResponse {
   factory ProductResponse.fromJson(Map<String, dynamic> json) {
     return ProductResponse(
       products: (json['products'] as List)
-          .map((item) => Product.fromJson(item))
-          .toList(),
+        .map((item) => Product.fromJson(item))
+        .toList(),
       total: json['total'],
       skip: json['skip'],
       limit: json['limit'],

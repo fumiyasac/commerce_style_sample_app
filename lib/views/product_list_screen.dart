@@ -4,7 +4,7 @@ import 'package:commerce_style_sample_app/models/product.dart';
 import 'package:commerce_style_sample_app/providers/providers.dart';
 
 class ProductListScreen extends ConsumerStatefulWidget {
-  const ProductListScreen({Key? key}) : super(key: key);
+  const ProductListScreen({super.key});
 
   @override
   ConsumerState<ProductListScreen> createState() => _ProductListScreenState();
@@ -129,7 +129,6 @@ class _ProductListScreenState extends ConsumerState<ProductListScreen> {
   Widget build(BuildContext context) {
     final state = ref.watch(productViewModelProvider);
     final products = state.products;
-
     return Scaffold(
       appBar: AppBar(
         title: const Text('商品リスト'),
@@ -168,7 +167,6 @@ class _ProductListScreenState extends ConsumerState<ProductListScreen> {
                 ),
               );
             }
-
             return _buildProductCard(products[index]);
           },
         ),
