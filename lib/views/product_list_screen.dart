@@ -50,6 +50,59 @@ class _ProductListScreenState extends ConsumerState<ProductListScreen> {
     }
   }
 
+  //
+  //
+  @override
+  Widget build(BuildContext context) {
+    final state = ref.watch(productViewModelProvider);
+    final products = state.products;
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('商品リスト'),
+      ),
+      body: state.hasError && products.isEmpty
+          ? Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              'エラーが発生しました: ${state.errorMessage}',
+              textAlign: TextAlign.center,
+              style: const TextStyle(color: Colors.red),
+            ),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: () => ref.read(productViewModelProvider.notifier).fetchProducts(),
+              child: const Text('再試行'),
+            ),
+          ],
+        ),
+      )
+          : RefreshIndicator(
+        onRefresh: () async {
+          await ref.read(productViewModelProvider.notifier).fetchProducts(refresh: true);
+        },
+        child: ListView.builder(
+          controller: _scrollController,
+          itemCount: products.length + (state.isLoading ? 1 : 0),
+          itemBuilder: (context, index) {
+            if (index == products.length) {
+              return const Center(
+                child: Padding(
+                  padding: EdgeInsets.all(16.0),
+                  child: CircularProgressIndicator(),
+                ),
+              );
+            }
+            return _buildProductCard(products[index]);
+          },
+        ),
+      ),
+    );
+  }
+
+  //
+  //
   Widget _buildProductCard(Product product) {
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -128,55 +181,6 @@ class _ProductListScreenState extends ConsumerState<ProductListScreen> {
               ),
             ),
           ],
-        ),
-      ),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final state = ref.watch(productViewModelProvider);
-    final products = state.products;
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('商品リスト'),
-      ),
-      body: state.hasError && products.isEmpty
-          ? Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              'エラーが発生しました: ${state.errorMessage}',
-              textAlign: TextAlign.center,
-              style: const TextStyle(color: Colors.red),
-            ),
-            const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: () => ref.read(productViewModelProvider.notifier).fetchProducts(),
-              child: const Text('再試行'),
-            ),
-          ],
-        ),
-      )
-          : RefreshIndicator(
-        onRefresh: () async {
-          await ref.read(productViewModelProvider.notifier).fetchProducts(refresh: true);
-        },
-        child: ListView.builder(
-          controller: _scrollController,
-          itemCount: products.length + (state.isLoading ? 1 : 0),
-          itemBuilder: (context, index) {
-            if (index == products.length) {
-              return const Center(
-                child: Padding(
-                  padding: EdgeInsets.all(16.0),
-                  child: CircularProgressIndicator(),
-                ),
-              );
-            }
-            return _buildProductCard(products[index]);
-          },
         ),
       ),
     );
