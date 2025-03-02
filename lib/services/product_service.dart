@@ -1,22 +1,37 @@
-import 'dart:convert';
-import 'package:http/http.dart' as http;
+import 'package:dio/dio.dart';
 import 'package:commerce_style_sample_app/models/product_response.dart';
 
 class ProductService {
+  final Dio _dio;
   final String baseUrl = 'https://dummyjson.com/products';
+
+  ProductService() : _dio = Dio(BaseOptions(
+    connectTimeout: const Duration(seconds: 5),
+    receiveTimeout: const Duration(seconds: 3),
+    contentType: 'application/json',
+  ));
 
   Future<ProductResponse> getProducts({int limit = 10, int skip = 0}) async {
     print("===== #Debug Start =====");
     print("int limit = $limit, int skip = $skip");
     print("===== #Debug End =====");
-    final response = await http.get(
-      Uri.parse('$baseUrl?limit=$limit&skip=$skip'),
-    );
-
-    if (response.statusCode == 200) {
-      return ProductResponse.fromJson(json.decode(response.body));
-    } else {
-      throw Exception('Failed to load products: ${response.statusCode}');
+    try {
+      final response = await _dio.get(
+        baseUrl,
+        queryParameters: {
+          'limit': limit,
+          'skip': skip,
+        },
+      );
+      return ProductResponse.fromJson(response.data);
+    } on DioException catch (e) {
+      if (e.response != null) {
+        throw Exception('Failed to load products: ${e.response?.statusCode}');
+      } else {
+        throw Exception('Network error: ${e.message}');
+      }
+    } catch (e) {
+      throw Exception('Unexpected error: $e');
     }
   }
 }
