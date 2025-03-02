@@ -1,12 +1,24 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:commerce_style_sample_app/view_models/product_state.dart';
 import 'package:commerce_style_sample_app/services/product_service.dart';
 
-class ProductViewModel extends StateNotifier<ProductState> {
-  final ProductService _productService;
-  final int _limit = 10;
+part 'product_view_model.g.dart';
 
-  ProductViewModel(this._productService) : super(ProductState.initial());
+// ServiceProviderを定義する
+@riverpod
+ProductService productService(ProductServiceRef ref) {
+  return ProductService();
+}
+
+// ViewModelProviderを定義する
+@riverpod
+class ProductViewModel extends _$ProductViewModel {
+
+  @override
+  ProductState build() {
+    // 初期状態を返す
+    return ProductState.initial();
+  }
 
   Future<void> fetchProducts({bool refresh = false}) async {
     // リフレッシュの場合は状態をリセット
@@ -23,8 +35,9 @@ class ProductViewModel extends StateNotifier<ProductState> {
     state = state.copyWith(isLoading: true, hasError: false);
 
     try {
-      final result = await _productService.getProducts(
-        limit: _limit,
+      final productService = ref.read(productServiceProvider);
+      final result = await productService.getProducts(
+        limit: 10,
         skip: state.currentSkip,
       );
 
@@ -37,11 +50,12 @@ class ProductViewModel extends StateNotifier<ProductState> {
       } else {
         // 既存のリストに追加
         final updatedProducts = [...state.products, ...result.products];
+
         state = state.copyWith(
           products: updatedProducts,
           isLoading: false,
-          currentSkip: state.currentSkip + _limit,
-          hasMoreData: state.currentSkip + _limit < result.total,
+          currentSkip: state.currentSkip + 10,
+          hasMoreData: state.currentSkip + 10 < result.total,
         );
       }
     } catch (e) {

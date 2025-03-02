@@ -1,7 +1,7 @@
+import 'package:commerce_style_sample_app/view_models/product_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:commerce_style_sample_app/models/product.dart';
-import 'package:commerce_style_sample_app/providers/providers.dart';
 
 class ProductListScreen extends ConsumerStatefulWidget {
   const ProductListScreen({super.key});
