@@ -107,6 +107,15 @@ class _ProductListScreenState extends ConsumerState<ProductListScreen> {
                       ),
                     ],
                   ),
+                  const SizedBox(height: 8),
+                  Text(
+                    "No.${product.id} / Stock: ${product.stock}",
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 11,
+                      color: Colors.grey,
+                    ),
+                  ),
                 ],
               ),
             ),
