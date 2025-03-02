@@ -52,6 +52,10 @@ class ProductViewModel extends StateNotifier<ProductState> {
         hasError: true,
         errorMessage: e.toString(),
       );
+      print("===== #Debug Start =====");
+      print("エラー状態に更新");
+      print(e.toString());
+      print("===== #Debug End =====");
     }
   }
 }

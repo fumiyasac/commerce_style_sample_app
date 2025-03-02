@@ -6,6 +6,9 @@ class ProductService {
   final String baseUrl = 'https://dummyjson.com/products';
 
   Future<ProductResponse> getProducts({int limit = 10, int skip = 0}) async {
+    print("===== #Debug Start =====");
+    print("int limit = $limit, int skip = $skip");
+    print("===== #Debug End =====");
     final response = await http.get(
       Uri.parse('$baseUrl?limit=$limit&skip=$skip'),
     );
