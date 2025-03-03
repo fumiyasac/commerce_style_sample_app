@@ -11,30 +11,29 @@ ProductService productService(ProductServiceRef ref) {
 }
 
 // ViewModelProviderを定義する
+// 👉 riverpod_generatorでの自動生成を利用して作成する
 @riverpod
 class ProductViewModel extends _$ProductViewModel {
 
   @override
   ProductState build() {
-    // 初期状態を返す
+    // 最初はProductStateの初期状態を返す
     return ProductState.initial();
   }
 
   Future<void> fetchProducts({bool refresh = false}) async {
-    // リフレッシュの場合は状態をリセット
+    // Refreshが実行された場合はProductStateを初期状態にリセットする
     if (refresh) {
       state = ProductState.initial();
     }
-
-    // すでにロード中か、もうデータがない場合は何もしない
+    // 既にLoading中、または、追加のデータがない場合は以降の処理を実施しない
     if (state.isLoading || (!state.hasMoreData && !refresh)) {
       return;
     }
-
-    // ロード中状態に更新
+    // ProductStateをLoading中状態に更新する
     state = state.copyWith(isLoading: true, hasError: false);
-
     try {
+      // productServiceでの処理を実行するために、productServiceProviderを利用する
       final productService = ref.read(productServiceProvider);
       final result = await productService.getProducts(
         limit: 10,
@@ -42,15 +41,14 @@ class ProductViewModel extends _$ProductViewModel {
       );
 
       if (result.products.isEmpty) {
-        // データがなければ終了フラグを立てる
+        // 追加のデータがない場合は終了フラグを立てる
         state = state.copyWith(
           isLoading: false,
           hasMoreData: false,
         );
       } else {
-        // 既存のリストに追加
+        // 新たに取得したプロダクト一覧情報が後に来るように、既存のリストに追加する
         final updatedProducts = [...state.products, ...result.products];
-
         state = state.copyWith(
           products: updatedProducts,
           isLoading: false,
@@ -59,7 +57,7 @@ class ProductViewModel extends _$ProductViewModel {
         );
       }
     } catch (e) {
-      // エラー状態に更新
+      // データ取得処理時にエラーが発生した場合は、エラー状態に更新する
       state = state.copyWith(
         isLoading: false,
         hasError: true,
