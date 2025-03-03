@@ -19,12 +19,13 @@ class _ProductListScreenState extends ConsumerState<ProductListScreen> {
   @override
   void initState() {
     super.initState();
-
     // 初回表示時のデータ取得処理
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(productViewModelProvider.notifier).fetchProducts();
+      // ViewModelProviderのnotifierを利用する（ConsumerStatefulWidgetなのでそのまま利用可能）
+      final notifier = ref.read(productViewModelProvider.notifier);
+      // プロダクト情報のfetch処理を実行する
+      notifier.fetchProducts();
     });
-
     // Scroll処理のListener追加
     _scrollController.addListener(_onScroll);
   }
@@ -41,7 +42,7 @@ class _ProductListScreenState extends ConsumerState<ProductListScreen> {
   // 👉 Scroll最下部に到達したら、プロダクト情報のfetch処理を試みる
   void _onScroll() {
     if (_scrollController.position.pixels >= _scrollController.position.maxScrollExtent) {
-      // ViewModelProviderを利用する（ConsumerStatefulWidgetなのでそのまま利用可能）
+      // ViewModelProviderのstateを利用する（ConsumerStatefulWidgetなのでそのまま利用可能）
       final state = ref.read(productViewModelProvider);
       // 読み込み中でない時、かつ、次のデータが存在する時にプロダクト情報のfetch処理を実行する
       if (!state.isLoading && state.hasMoreData) {
@@ -50,17 +51,21 @@ class _ProductListScreenState extends ConsumerState<ProductListScreen> {
     }
   }
 
-  //
-  //
   @override
   Widget build(BuildContext context) {
+    // ViewModelProviderのstateを利用する（ConsumerStatefulWidgetなのでそのまま利用可能）
     final state = ref.watch(productViewModelProvider);
+    // ViewModelProviderのnotifierを利用する（ConsumerStatefulWidgetなのでそのまま利用可能）
+    final notifier = ref.read(productViewModelProvider.notifier);
+    // プロダクト一覧をstateから取得する
     final products = state.products;
     return Scaffold(
       appBar: AppBar(
         title: const Text('商品リスト'),
       ),
       body: state.hasError && products.isEmpty
+      // MEMO: エラー発生時はエラーメッセージ表示と再試行ボタンを表示する
+      // 👉 エラー発生時のWidget表示条件は「state.hasError && products.isEmpty」と定義する
           ? Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -72,18 +77,22 @@ class _ProductListScreenState extends ConsumerState<ProductListScreen> {
             ),
             const SizedBox(height: 16),
             ElevatedButton(
-              onPressed: () => ref.read(productViewModelProvider.notifier).fetchProducts(),
+              onPressed: () => notifier.fetchProducts(),
               child: const Text('再試行'),
             ),
           ],
         ),
       )
+      // MEMO: 正常処理時は子要素にListViewを仕込んだRefreshIndicatorを表示する
           : RefreshIndicator(
         onRefresh: () async {
-          await ref.read(productViewModelProvider.notifier).fetchProducts(refresh: true);
+          // Refresh処理実行に、現在表示されている内容をリセットしてプロダクト情報のfetch処理を実行する
+          // 👉 fetchProductsの内部に「変数: refresh」でtrueの時はstate内を初期ステータスに戻している
+          await notifier.fetchProducts(refresh: true);
         },
         child: ListView.builder(
           controller: _scrollController,
+          // MEMO: Loading中はCircularProgressIndicatorを表示する
           itemCount: products.length + (state.isLoading ? 1 : 0),
           itemBuilder: (context, index) {
             if (index == products.length) {
@@ -101,8 +110,7 @@ class _ProductListScreenState extends ConsumerState<ProductListScreen> {
     );
   }
 
-  //
-  //
+  // プロダクト情報を表示するためのCard要素用Widgetを定義する
   Widget _buildProductCard(Product product) {
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
