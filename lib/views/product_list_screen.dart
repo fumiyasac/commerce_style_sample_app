@@ -46,7 +46,8 @@ class _ProductListScreenState extends ConsumerState<ProductListScreen> {
       final state = ref.read(productViewModelProvider);
       // 読み込み中でない時、かつ、次のデータが存在する時にプロダクト情報のfetch処理を実行する
       if (!state.isLoading && state.hasMoreData) {
-        ref.read(productViewModelProvider.notifier).fetchProducts();
+        final notifier = ref.read(productViewModelProvider.notifier);
+        notifier.fetchProducts();
       }
     }
   }
