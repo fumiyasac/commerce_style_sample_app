@@ -43,7 +43,7 @@ class _ProductListScreenState extends ConsumerState<ProductListScreen> {
   void _onScroll() {
     if (_scrollController.position.pixels >= _scrollController.position.maxScrollExtent) {
       // ViewModelProviderのstateを利用する（ConsumerStatefulWidgetなのでそのまま利用可能）
-      final state = ref.read(productViewModelProvider);
+      final state = ref.watch(productViewModelProvider);
       // 読み込み中でない時、かつ、次のデータが存在する時にプロダクト情報のfetch処理を実行する
       if (!state.isLoading && state.hasMoreData) {
         final notifier = ref.read(productViewModelProvider.notifier);
