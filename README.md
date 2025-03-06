@@ -150,6 +150,7 @@ class ProductViewModel extends _$ProductViewModel {
 
 <details>
 <summary>全ての実装Codeはこちら</summary>
+
 ```dart
 import 'package:commerce_style_sample_app/models/product.dart';
 import 'package:commerce_style_sample_app/models/product_response.dart';
