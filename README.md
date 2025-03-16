@@ -31,6 +31,9 @@ __【サンプルで利用したパッケージ】__
 - build_runner:
     - コード自動生成の実行
     - https://pub.dev/packages/build_runner
+- riverpod_annotation
+  - `@riverpod`アノテーションの利用
+  - https://pub.dev/packages/riverpod_annotation
 - riverpod_generator:
     - RiverpodのおけるProviderの自動生成
     - https://pub.dev/packages/build_runner
