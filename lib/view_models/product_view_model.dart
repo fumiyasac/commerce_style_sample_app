@@ -1,3 +1,4 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:commerce_style_sample_app/view_models/product_state.dart';
 import 'package:commerce_style_sample_app/services/product_service.dart';
@@ -6,7 +7,7 @@ part 'product_view_model.g.dart';
 
 // ServiceProviderを定義する
 @riverpod
-ProductService productService(ProductServiceRef ref) {
+ProductService productService(Ref ref) {
   return ProductService();
 }
 
